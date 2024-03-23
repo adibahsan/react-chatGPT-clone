@@ -15,15 +15,28 @@ const cors = require("cors");
 app.use(bodyParser.json());
 app.use(cors());
 
-messages = [];
+inputMessages = [];
 
 app.post("/", async (req, res) => {
   const { message } = req.body;
+
+  console.log("All Input Messages : ", inputMessages);
+
+  inputMessages.push({
+    role: "user",
+    content: message,
+  });
   try {
     const response = await openai.chat.completions.create({
-      messages: [{ role: 'user', content: 'Say this is a test' }],
+      messages:inputMessages,
       model: 'gpt-3.5-turbo',
+    })
+
+    inputMessages.push({
+      role: "assistant",
+      content: response.choices[0].message.content,
     });
+
     console.log(response.choices[0]);
 
     res.json(response.choices[0].message.content.trim())
