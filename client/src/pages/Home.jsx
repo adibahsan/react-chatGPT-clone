@@ -24,7 +24,7 @@ const Home = () => {
         // Set responseFromAPI to true before making the fetch request
         setReponseFromAPI(true);
         setChatLog([...chatLog, { chatPrompt: inputPrompt }]);
-        callAPI();
+        callAPI().then(r => console.log("response callAPI()", r))
 
         // hide the keyboard in mobile devices
         e.target.querySelector("input").blur();
@@ -32,17 +32,19 @@ const Home = () => {
 
       async function callAPI() {
         try {
-          const response = await fetch("https://talk-bot.onrender.com/", {
+          const response = await fetch("http://localhost:4000/", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ message: inputPrompt }),
           });
           const data = await response.json();
+
+          console.log("openai response", data);
           setChatLog([
             ...chatLog,
             {
               chatPrompt: inputPrompt,
-              botMessage: data.botResponse,
+              botMessage: data,
             },
           ]);
           setErr(false);
